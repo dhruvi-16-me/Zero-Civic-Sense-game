@@ -13,12 +13,19 @@ export class GameUI {
           <div class="bar"><div id="civicBar"></div></div>
         </div>
       </div>
+      <div class="hud-row">
+        <div class="panel dialogue-wrap">
+          <div class="label">Street Commentary</div>
+          <div class="dialogue" id="dialogueVal">Welcome to Zero Civic Sense.</div>
+        </div>
+      </div>
     `;
     this.scoreVal = document.getElementById("scoreVal");
     this.timeVal = document.getElementById("timeVal");
     this.caughtVal = document.getElementById("caughtVal");
     this.comboVal = document.getElementById("comboVal");
     this.civicBar = document.getElementById("civicBar");
+    this.dialogueVal = document.getElementById("dialogueVal");
   }
 
   update(state) {
@@ -37,5 +44,10 @@ export class GameUI {
 
   hideMessage() {
     this.messageEl.classList.add("hidden");
+  }
+
+  setDialogue(text) {
+    if (!this.dialogueVal) return;
+    this.dialogueVal.textContent = text;
   }
 }

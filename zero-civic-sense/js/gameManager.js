@@ -29,16 +29,51 @@ export class GameManager {
     this.elapsed = 0;
     this.audioReady = false;
     this.audio = null;
+    this.dialoguePool = [
+      "Zero Civic Sense level: expert photobomber.",
+      "Aunty: 'Beta, frame se bahar ho jao!'",
+      "Public notice: this is not your personal selfie zone.",
+      "Guard says: civic sense missing, suspect found.",
+      "City mood: one photobomb away from chaos.",
+      "You again? Every photo has your attendance.",
+      "Breaking news: random stranger ruins perfect shot."
+    ];
+    this.dialogueTimer = 2.5;
 
     this.spawnInitialNPCs();
     window.addEventListener("pointerdown", () => this.initAudio(), { once: true });
     this.ui.showMessage("Click anywhere to start<br/>Move with WASD or Arrow Keys");
   }
 
+  resetGame() {
+    this.victims = [];
+    this.guards = [];
+    this.pedestrians = [];
+    this.particles = [];
+    this.timeLeft = 60;
+    this.score = 0;
+    this.caught = 0;
+    this.civicSense = 100;
+    this.combo = 0;
+    this.lastPhotobombTime = -999;
+    this.chaosMode = false;
+    this.chaosTimer = 0;
+    this.flashTimer = 0;
+    this.catchCooldown = 0;
+    this.elapsed = 0;
+    this.player.x = this.arena.x + this.arena.width * 0.5 - this.player.width * 0.5;
+    this.player.y = this.arena.y + this.arena.height * 0.65 - this.player.height * 0.5;
+    this.player.walkCycle = 0;
+    this.spawnInitialNPCs();
+    this.state = "running";
+    this.ui.hideMessage();
+    this.ui.setDialogue("Back on the street. Civic sense still on vacation.");
+  }
+
   spawnInitialNPCs() {
     for (let i = 0; i < 9; i++) this.victims.push(new Victim(this.arena));
-    for (let i = 0; i < 3; i++) this.guards.push(new Guard(this.arena));
-    for (let i = 0; i < 16; i++) this.pedestrians.push(new Pedestrian(this.arena));
+    for (let i = 0; i < 2; i++) this.guards.push(new Guard(this.arena));
+    for (let i = 0; i < 9; i++) this.pedestrians.push(new Pedestrian(this.arena));
   }
 
   initAudio() {
@@ -61,6 +96,7 @@ export class GameManager {
     this.audioReady = true;
     this.state = "running";
     this.ui.hideMessage();
+    this.ui.setDialogue("Game started. Try not to become local legend too quickly.");
   }
 
   playShutter() {
@@ -104,7 +140,10 @@ export class GameManager {
     if (this.timeLeft <= 0) {
       this.timeLeft = 0;
       this.state = "complete";
-      this.ui.showMessage(`Game Complete!<br/>Final Score: ${this.score}`);
+      this.ui.showMessage(
+        `Game Complete!<br/>Final Score: ${this.score}<br/><button id="restartBtn" class="overlay-btn">Restart</button>`
+      );
+      this.bindRestartButton();
       return;
     }
 
@@ -116,6 +155,7 @@ export class GameManager {
     this.handlePhotoBombs();
     this.handleCatches();
     this.handleSpawns(dt);
+    this.updateDialogue(dt);
 
     if (this.chaosMode) {
       this.chaosTimer -= dt;
@@ -137,10 +177,10 @@ export class GameManager {
     if (Math.random() < (0.18 + difficulty * 0.26) * dt && this.victims.length < 12) {
       this.victims.push(new Victim(this.arena));
     }
-    if (Math.random() < (0.04 + difficulty * 0.13) * dt && this.guards.length < 5) {
+    if (Math.random() < (0.015 + difficulty * 0.04) * dt && this.guards.length < 2) {
       this.guards.push(new Guard(this.arena));
     }
-    if (Math.random() < 0.18 * dt && this.pedestrians.length < 22) {
+    if (Math.random() < 0.11 * dt && this.pedestrians.length < 12) {
       this.pedestrians.push(new Pedestrian(this.arena));
     }
   }
@@ -163,6 +203,11 @@ export class GameManager {
         };
         const perfect = pointInRect(playerCenter, centerRect);
         this.score += perfect ? 20 : 10;
+        this.ui.setDialogue(
+          perfect
+            ? "Perfect photobomb. Zero civic sense, full precision."
+            : "Nice entry. Somebody's profile pic is ruined."
+        );
         this.spawnPhotobombParticles(playerCenter.x, playerCenter.y, perfect);
         const quick = this.elapsed - this.lastPhotobombTime < this.comboWindow;
         this.combo = quick ? this.combo + 1 : 1;
@@ -186,6 +231,7 @@ export class GameManager {
         this.civicSense = clamp(this.civicSense - 26, 0, 100);
         this.catchCooldown = 1.4;
         this.playAlert();
+        this.ui.setDialogue("Caught! Guard says: 'Public nuisance detected.'");
         this.spawnAlertParticles(this.player.x + 16, this.player.y + 20);
         this.player.x = clamp(
           this.player.x - 120 + Math.random() * 240,
@@ -199,11 +245,28 @@ export class GameManager {
         );
         if (this.caught >= 3) {
           this.state = "gameover";
-          this.ui.showMessage(`Game Over<br/>You were caught ${this.caught} times<br/>Score: ${this.score}`);
+          this.ui.showMessage(
+            `Game Over<br/>You were caught ${this.caught} times<br/>Score: ${this.score}<br/><button id="restartBtn" class="overlay-btn">Restart</button>`
+          );
+          this.bindRestartButton();
         }
         break;
       }
     }
+  }
+
+  bindRestartButton() {
+    const restartBtn = document.getElementById("restartBtn");
+    if (!restartBtn) return;
+    restartBtn.addEventListener("click", () => this.resetGame(), { once: true });
+  }
+
+  updateDialogue(dt) {
+    this.dialogueTimer -= dt;
+    if (this.dialogueTimer > 0) return;
+    this.dialogueTimer = 4 + Math.random() * 2.5;
+    const randomLine = this.dialoguePool[(Math.random() * this.dialoguePool.length) | 0];
+    this.ui.setDialogue(randomLine);
   }
 
   spawnPhotobombParticles(x, y, perfect) {

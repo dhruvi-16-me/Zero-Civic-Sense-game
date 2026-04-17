@@ -65,6 +65,7 @@ export class Player {
     const x = this.x;
     const y = this.y;
     const legSwing = Math.sin(this.walkCycle) * 2.4;
+    const armSwing = Math.sin(this.walkCycle + Math.PI * 0.5) * 1.8;
 
     // Strong ground shadow to anchor top-down readability.
     ctx.fillStyle = "rgba(0,0,0,0.4)";
@@ -77,32 +78,57 @@ export class Player {
     ctx.scale(this.direction, 1);
     ctx.translate(-this.width / 2, -this.height / 2);
 
-    // Outline first so the player remains visible on all surfaces.
-    ctx.fillStyle = "#0d1733";
-    ctx.fillRect(6, 8, 18, 26);
+    // Human proportions: head, neck, torso, arms and legs.
+    ctx.fillStyle = "#121a39";
+    ctx.fillRect(4, 9, 22, 25);
 
-    // High-contrast colors as requested.
-    ctx.fillStyle = "#ff3d3d";
-    ctx.fillRect(8, 10, 14, 20);
-    ctx.fillStyle = "#ffd21f";
-    ctx.fillRect(9, 20, 12, 6);
+    // Jacket torso.
+    ctx.fillStyle = "#ff3a36";
+    ctx.fillRect(7, 14, 16, 14);
+    ctx.fillStyle = "#ffd11f";
+    ctx.fillRect(13, 14, 4, 14);
 
-    ctx.fillStyle = "#ffc38e";
+    // Neck.
+    ctx.fillStyle = "#ffca9f";
+    ctx.fillRect(13, 11, 4, 3);
+
+    // Arms with slight walk swing.
+    ctx.fillStyle = "#ff3a36";
+    ctx.fillRect(5, 15 + armSwing, 3, 10);
+    ctx.fillRect(22, 15 - armSwing, 3, 10);
+    ctx.fillStyle = "#ffca9f";
+    ctx.fillRect(5, 24 + armSwing, 3, 3);
+    ctx.fillRect(22, 24 - armSwing, 3, 3);
+
+    // Head.
+    ctx.fillStyle = "#ffd1ad";
     ctx.beginPath();
-    ctx.arc(15, 7, 7, 0, Math.PI * 2);
+    ctx.arc(15, 8, 6.5, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "#1d2f66";
-    ctx.fillRect(8, 2, 14, 4);
+    // Hair and facial hints.
+    ctx.fillStyle = "#1b2451";
+    ctx.fillRect(9, 1, 12, 4);
+    ctx.fillRect(8, 4, 2, 3);
+    ctx.fillRect(20, 4, 2, 3);
+    ctx.fillStyle = "#1a233f";
+    ctx.fillRect(12, 8, 1.6, 1.6);
+    ctx.fillRect(16.4, 8, 1.6, 1.6);
 
-    ctx.fillStyle = "#0b132e";
-    ctx.fillRect(8, 30, 5, 7 + legSwing);
-    ctx.fillRect(17, 30, 5, 7 - legSwing);
+    // Legs and shoes.
+    ctx.fillStyle = "#213567";
+    ctx.fillRect(9, 28, 5, 8 + legSwing);
+    ctx.fillRect(16, 28, 5, 8 - legSwing);
+    ctx.fillStyle = "#0d1228";
+    ctx.fillRect(8, 36 + legSwing, 6, 2);
+    ctx.fillRect(16, 36 - legSwing, 6, 2);
 
-    // Thin glow edge.
-    ctx.strokeStyle = "rgba(255,242,130,0.8)";
-    ctx.lineWidth = 1.2;
-    ctx.strokeRect(7, 9, 16, 22);
+    // Visibility outline.
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(6.5, 13.5, 17, 15);
+    ctx.strokeStyle = "rgba(255,242,130,0.72)";
+    ctx.strokeRect(5.5, 12.5, 19, 17);
 
     ctx.restore();
   }

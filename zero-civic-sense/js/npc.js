@@ -109,7 +109,7 @@ export class Guard {
     this.height = 34;
     this.x = arena.x + 30 + Math.random() * (arena.width - 60);
     this.y = arena.y + 30 + Math.random() * (arena.height - 60);
-    this.baseSpeed = 102;
+    this.baseSpeed = 78;
     this.dir = Math.random() > 0.5 ? 1 : -1;
     this.vy = Math.random() > 0.5 ? 1 : -1;
     this.alertRange = 190;
@@ -119,7 +119,7 @@ export class Guard {
     const dx = player.x - this.x;
     const dy = player.y - this.y;
     const distance = Math.hypot(dx, dy);
-    const difficultyBoost = (100 - civicSense) * 0.62;
+    const difficultyBoost = (100 - civicSense) * 0.34;
     const speed = this.baseSpeed + difficultyBoost;
 
     if (distance < this.alertRange) {
@@ -156,18 +156,24 @@ export class Guard {
     ctx.ellipse(x + 14, y + 31, 11, 5, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "#14204a";
-    ctx.fillRect(x + 6, y + 6, 16, 21);
-    ctx.fillStyle = "#ffc53b";
-    ctx.fillRect(x + 7, y + 7, 14, 19);
+    // Distinct guard look: dark vest, red cap, baton.
+    ctx.fillStyle = "#0d193d";
+    ctx.fillRect(x + 6, y + 7, 16, 19);
+    ctx.fillStyle = "#324f9f";
+    ctx.fillRect(x + 8, y + 10, 12, 15);
+    ctx.fillStyle = "#ff5b57";
+    ctx.fillRect(x + 7, y - 1, 14, 4);
     ctx.fillStyle = "#ffd7b4";
     ctx.beginPath();
     ctx.arc(x + 14, y + 4, 6, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#24376c";
+    ctx.fillStyle = "#1f2a56";
     ctx.fillRect(x + 8, y + 25, 5, 8);
     ctx.fillRect(x + 15, y + 25, 5, 8);
-    ctx.strokeStyle = "rgba(255,90,90,0.7)";
+    ctx.fillStyle = "#1a1f31";
+    ctx.fillRect(x + 20, y + 14, 8, 3);
+
+    ctx.strokeStyle = "rgba(255,85,85,0.65)";
     ctx.lineWidth = 1.8;
     ctx.beginPath();
     ctx.arc(x + 14, y + 17, 24, 0, Math.PI * 2);
