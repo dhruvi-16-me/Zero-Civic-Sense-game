@@ -1,0 +1,129 @@
+:root {
+  --ui-bg: rgba(6, 15, 42, 0.72);
+  --ui-border: rgba(137, 215, 255, 0.45);
+  --ui-text: #f7f8ff;
+  --accent: #ffd439;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--ui-text);
+  background: radial-gradient(circle at 20% 20%, #3c1dcf, #090d26 72%);
+}
+
+.game-shell {
+  position: relative;
+  width: min(96vw, 1280px);
+}
+
+.title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  background: var(--ui-bg);
+  border: 1px solid var(--ui-border);
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 20px rgba(80, 180, 255, 0.22);
+}
+
+.title-bar h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+}
+
+.title-bar p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+canvas {
+  width: 100%;
+  border-radius: 14px;
+  border: 2px solid rgba(147, 229, 255, 0.68);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.36), 0 0 26px rgba(113, 222, 255, 0.28);
+  image-rendering: pixelated;
+}
+
+#hud {
+  position: absolute;
+  inset: 62px 16px auto 16px;
+  pointer-events: none;
+}
+
+.hud-row {
+  display: flex;
+  gap: 10px;
+}
+
+.panel {
+  background: var(--ui-bg);
+  border: 1px solid var(--ui-border);
+  border-radius: 12px;
+  padding: 8px 12px;
+  min-width: 132px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 12px rgba(86, 184, 255, 0.18);
+}
+
+.label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #7fcbff;
+}
+
+.value {
+  margin-top: 3px;
+  font-size: 1.28rem;
+  font-weight: 600;
+}
+
+.bar-wrap {
+  width: 250px;
+}
+
+.bar {
+  margin-top: 6px;
+  height: 11px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.bar > div {
+  height: 100%;
+  background: linear-gradient(90deg, #ffb324, #0fe0b5);
+  width: 100%;
+  transition: width 0.2s ease;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #fff8dd;
+  background: rgba(5, 10, 25, 0.5);
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+}
+
+.hidden {
+  display: none;
+}
