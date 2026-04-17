@@ -14,8 +14,9 @@ export class GameManager {
     this.guards = [];
     this.pedestrians = [];
     this.particles = [];
-    this.timeLeft = 60;
+    this.timeLeft = 90;
     this.score = 0;
+    this.bestScore = this.loadBestScore();
     this.caught = 0;
     this.civicSense = 100;
     this.combo = 0;
@@ -50,7 +51,7 @@ export class GameManager {
     this.guards = [];
     this.pedestrians = [];
     this.particles = [];
-    this.timeLeft = 60;
+    this.timeLeft = 90;
     this.score = 0;
     this.caught = 0;
     this.civicSense = 100;
@@ -140,8 +141,9 @@ export class GameManager {
     if (this.timeLeft <= 0) {
       this.timeLeft = 0;
       this.state = "complete";
+      this.updateBestScore();
       this.ui.showMessage(
-        `Game Complete!<br/>Final Score: ${this.score}<br/><button id="restartBtn" class="overlay-btn">Restart</button>`
+        `Game Complete!<br/>Final Score: ${this.score}<br/>Best Score: ${this.bestScore}<br/><button id="restartBtn" class="overlay-btn">Restart</button>`
       );
       this.bindRestartButton();
       return;
@@ -164,6 +166,7 @@ export class GameManager {
 
     this.ui.update({
       score: this.score,
+      bestScore: this.bestScore,
       timeLeft: this.timeLeft,
       caught: this.caught,
       combo: this.combo,
@@ -245,8 +248,9 @@ export class GameManager {
         );
         if (this.caught >= 3) {
           this.state = "gameover";
+          this.updateBestScore();
           this.ui.showMessage(
-            `Game Over<br/>You were caught ${this.caught} times<br/>Score: ${this.score}<br/><button id="restartBtn" class="overlay-btn">Restart</button>`
+            `Game Over<br/>You were caught ${this.caught} times<br/>Score: ${this.score}<br/>Best Score: ${this.bestScore}<br/><button id="restartBtn" class="overlay-btn">Restart</button>`
           );
           this.bindRestartButton();
         }
@@ -267,6 +271,24 @@ export class GameManager {
     this.dialogueTimer = 4 + Math.random() * 2.5;
     const randomLine = this.dialoguePool[(Math.random() * this.dialoguePool.length) | 0];
     this.ui.setDialogue(randomLine);
+  }
+
+  loadBestScore() {
+    try {
+      return Number(localStorage.getItem("zero-civic-sense-best-score")) || 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  updateBestScore() {
+    if (this.score <= this.bestScore) return;
+    this.bestScore = this.score;
+    try {
+      localStorage.setItem("zero-civic-sense-best-score", String(this.bestScore));
+    } catch {
+      // Ignore storage failures and keep gameplay functional.
+    }
   }
 
   spawnPhotobombParticles(x, y, perfect) {

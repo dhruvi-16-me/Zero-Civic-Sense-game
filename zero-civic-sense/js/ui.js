@@ -5,7 +5,8 @@ export class GameUI {
     this.hudEl.innerHTML = `
       <div class="hud-row">
         <div class="panel"><div class="label">Score</div><div class="value" id="scoreVal">0</div></div>
-        <div class="panel"><div class="label">Time</div><div class="value" id="timeVal">60</div></div>
+        <div class="panel"><div class="label">Best</div><div class="value" id="bestVal">0</div></div>
+        <div class="panel"><div class="label">Time</div><div class="value" id="timeVal">90</div></div>
         <div class="panel"><div class="label">Caught</div><div class="value" id="caughtVal">0/3</div></div>
         <div class="panel"><div class="label">Combo</div><div class="value" id="comboVal">x0</div></div>
         <div class="panel bar-wrap">
@@ -21,6 +22,7 @@ export class GameUI {
       </div>
     `;
     this.scoreVal = document.getElementById("scoreVal");
+    this.bestVal = document.getElementById("bestVal");
     this.timeVal = document.getElementById("timeVal");
     this.caughtVal = document.getElementById("caughtVal");
     this.comboVal = document.getElementById("comboVal");
@@ -30,7 +32,8 @@ export class GameUI {
 
   update(state) {
     this.scoreVal.textContent = String(state.score);
-    this.timeVal.textContent = String(Math.max(0, Math.ceil(state.timeLeft)));
+    this.bestVal.textContent = String(state.bestScore);
+    this.timeVal.textContent = String(Math.max(0, Math.floor(state.timeLeft)));
     this.caughtVal.textContent = `${state.caught}/3`;
     this.comboVal.textContent = state.chaosMode ? "CHAOS!" : `x${state.combo}`;
     this.comboVal.style.color = state.chaosMode ? "#ffef88" : "#ffffff";
